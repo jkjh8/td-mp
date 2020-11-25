@@ -37,11 +37,11 @@
 <script>
 import { mapState } from 'vuex'
 import { validationMixin } from 'vuelidate'
+import { actions } from '../mixins/action'
 import { ipAddress, required } from 'vuelidate/lib/validators'
 
 export default {
-  middleware: 'auth',
-  mixins: [validationMixin],
+  mixins: [validationMixin, actions],
   validations: {
     ip: { ipAddress, required },
     nm: { ipAddress },
@@ -88,18 +88,10 @@ export default {
       setTimeout(() => (this.errmsg = false), 2000)
     }
   },
-  mounted () {
-    this.$axios.get('/api/setup').then((res) => {
-      for (const [key, value] of Object.entries(res.data)) {
-        if (key === 'ip') {
-          this.ip = value
-        } else if (key === 'netmask') {
-          this.nm = value
-        } else if (key === 'gw') {
-          this.gw = value
-        }
-      }
-    })
+  created () {
+    this.ip = this.setup.ip
+    this.nm = this.setup.netmask
+    this.gw = this.setup.gw
   },
   methods: {
     submit () {

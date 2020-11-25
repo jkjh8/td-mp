@@ -83,7 +83,7 @@ export default {
       this.setPlaylist(this.playlistId, this.playlist)
     },
     playid (id) {
-      this.$axios.get('/api/setup/playid/' + this.playlistId + '/' + id)
+      this.$axios.get('/api/playid/' + this.playlistId + '/' + id)
     }
   }
 }

@@ -27,14 +27,13 @@ const db_Playlist = [
 
 const mediaFolder = path.join(homedir, '/media')
 
-module.exports.getFilelist = function(req, res) {
-  db_filelist.find({}).select({ _id: 0 }).then((rtdata) => {
-    return res.status(200).json(rtdata)
-  })
+module.exports.getFilelist = async function(req, res) {
+  const rtdata = await db_filelist.find({}).select({ _id: 0 })
+  return res.status(200).json(rtdata)
 }
 
 module.exports.refrash = async function(req, res) {
-  await db_filelist.deleteMany()
+  await db_filelist.deleteMany({})
   let filesInfo = new Array()
   const files = fs.readdirSync(mediaFolder)
   for (const mediafile of files) {
@@ -47,12 +46,11 @@ module.exports.refrash = async function(req, res) {
       size: file.media.track[0].FileSize
     })
   }
-  const rtmsg = await db_filelist.insertMany(filesInfo)
+  db_filelist.insertMany(filesInfo, function(err, rtdata) {
+    if (err) return res.status(500).json({ error: err })
+    return res.status(200).json(rtdata)
 
-  if (rtmsg.length > 0) {
-    return res.status(200).json(rtmsg)
-  }
-  return res.status(500).json({ message: 'Error file load' })
+  })
 }
 
 module.exports.del = function(req, res) {

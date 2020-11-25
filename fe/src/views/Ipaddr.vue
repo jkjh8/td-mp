@@ -18,8 +18,10 @@
 <script>
 import InputIpAddr from '../components/InputIpAddr'
 import InputServerAddr from '../components/InputServerAddr'
+import { actions } from '../mixins/action'
 
 export default {
+  mixins: [actions],
   components: {
     InputIpAddr, InputServerAddr
   },

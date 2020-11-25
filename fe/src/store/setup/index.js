@@ -1,5 +1,5 @@
 const state = () => ({
-  setup: []
+  setup: ''
 })
 
 const mutations = {

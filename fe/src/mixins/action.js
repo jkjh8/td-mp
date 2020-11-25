@@ -38,7 +38,6 @@ export const actions = {
     getSetup () {
       this.$axios.get('/api/setup').then((res) => {
         this.$store.dispatch('setup/updateSetup', res.data)
-        return res.data
       })
     }
   }

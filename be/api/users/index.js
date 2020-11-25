@@ -33,7 +33,6 @@ module.exports.register = async function(req, res) {
 }
 
 module.exports.login = function(req, res, next) {
-  console.log(req.body)
   passport.authenticate('local', (err, user, info) => {
     if (err) { return next(err) }
     if (!user) { return res.status(403).json(info) }

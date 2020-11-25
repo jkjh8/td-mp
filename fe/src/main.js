@@ -5,14 +5,16 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import axios from 'axios'
 import VuetifyDialog from 'vuetify-dialog'
+import io from 'socket.io-client'
 import 'vuetify-dialog/dist/vuetify-dialog.css'
 import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 
 Vue.config.productionTip = false
-
+const socket = io('http://' + window.location.hostname + ':3000')
 axios.defaults.baseURL = 'http://' + window.location.hostname + ':3000'
 // axios.defaults.withCredentials = true
+Vue.prototype.$socket = socket
 Vue.prototype.$axios = axios
 
 Vue.use(VuetifyDialog, {

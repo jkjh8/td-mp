@@ -1,6 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import store from '../store'
+
+const requireAuth = () => (to, from, next) => {
+  if (store.state.users.user) {
+    return next()
+  }
+  next('/login')
+}
 
 Vue.use(VueRouter)
 
@@ -20,15 +28,18 @@ const routes = [
   },
   {
     path: '/myAccount',
-    component: () => import('../views/users/My-account.vue')
+    component: () => import('../views/users/My-account.vue'),
+    beforeEnter: requireAuth()
   },
   {
     path: '/playlist',
-    component: () => import('../views/Playlist.vue')
+    component: () => import('../views/Playlist.vue'),
+    beforeEnter: requireAuth()
   },
   {
     path: '/filelist',
-    component: () => import('../views/Filelist.vue')
+    component: () => import('../views/Filelist.vue'),
+    beforeEnter: requireAuth()
   },
   {
     path: '/player',
@@ -36,7 +47,8 @@ const routes = [
   },
   {
     path: '/ipaddr',
-    component: () => import('../views/Ipaddr.vue')
+    component: () => import('../views/Ipaddr.vue'),
+    beforeEnter: requireAuth()
   },
   {
     path: '*',

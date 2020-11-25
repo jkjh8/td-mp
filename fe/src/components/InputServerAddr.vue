@@ -27,10 +27,11 @@
 <script>
 import { mapState } from 'vuex'
 import { validationMixin } from 'vuelidate'
+import { actions } from '../mixins/action'
 import { ipAddress, required, maxValue } from 'vuelidate/lib/validators'
 
 export default {
-  mixins: [validationMixin],
+  mixins: [validationMixin, actions],
   validations: {
     serverip: { ipAddress, required },
     serverport: { required, maxValue: maxValue(65535) }
@@ -66,15 +67,8 @@ export default {
     }
   },
   mounted () {
-    this.$axios.get('/api/setup').then((res) => {
-      for (const [key, value] of Object.entries(res.data)) {
-        if (key === 'rtIp') {
-          this.serverip = value
-        } else if (key === 'rtPort') {
-          this.serverport = value
-        }
-      }
-    })
+    this.serverip = this.setup.rtIp
+    this.serverport = this.setup.rtPort
   },
   methods: {
     submit () {

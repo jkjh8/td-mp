@@ -1,12 +1,46 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
+    <div><h3>Media Server Status</h3></div>
+    <div><b>Play List : </b>{{ currentPlaylist }}</div>
+    <div><b>Play File : </b>{{ currentFile }}</div>
+    <div><b>Duration : </b>{{ duration }}</div>
+    <div><b>Status : </b>{{ status }}</div>
   </div>
 </template>
 
 <script>
+import { actions } from '../mixins/action'
+
 // @ is an alias to /src
 export default {
-  name: 'Home'
+  name: 'Home',
+  mixins: [actions],
+  data () {
+    return {
+      currentPlaylist: '',
+      currentFile: '',
+      duration: '',
+      status: 'Waiting...'
+    }
+  },
+  created () {
+    this.getSetup()
+    this.$socket.on('status', (data) => {
+      this.status = data
+    })
+    this.$socket.on('reconnectstatus', (data) => {
+      this.currentPlaylist = data.playlist
+      this.currentFile = data.playfile
+      this.duration = data.duration
+      this.status = data.status
+    })
+    this.$socket.emit('getStatus')
+  }
 }
 </script>
+
+<style>
+div {
+  text-align: center;
+}
+</style>
