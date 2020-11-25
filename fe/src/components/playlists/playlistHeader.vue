@@ -74,15 +74,11 @@ export default {
     }
   },
   methods: {
-    playli () {
-      this.$axios.get('/api/playli/' + this.playlistId).then((res) => {
-        console.log(res)
-      })
+    async playli () {
+      await this.$axios.get('/api/playli/' + this.playlistId)
     },
-    stop () {
-      this.$axios.get('/api/stop').then((res) => {
-        console.log(res)
-      })
+    async stop () {
+      await this.$axios.get('/api/stop')
     }
   }
 }

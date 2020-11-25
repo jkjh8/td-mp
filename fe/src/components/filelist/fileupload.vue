@@ -48,7 +48,10 @@ export default {
     }
   },
   methods: {
-    close () { this.$emit('closeUpload') },
+    close () {
+      this.selectedFiles = []
+      this.$emit('closeUpload')
+    },
     async uploadFiles () {
       this.$emit('closeUpload')
       const files = this.selectedFiles
@@ -61,6 +64,7 @@ export default {
         await this.fileuploadservice(i, files[i])
       }
       this.uploadDialog = false
+      this.selectedFiles = []
       const { data } = await this.$axios.get('/api/filelist/refrash')
       this.$store.dispatch('filelist/updateFilelist', data)
     },

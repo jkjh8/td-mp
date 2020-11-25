@@ -102,10 +102,9 @@ export default {
 
       }
     },
-    addPlaylist () {
-      this.$axios.post('/api/addPlaylist', { id: this.playlistId, file: this.selected }).then((res) => {
-        this.$store.dispatch('playlist/updatePlaylist', res.data)
-      })
+    async addPlaylist () {
+      const { data } = await this.$axios.post('/api/addPlaylist', { id: this.playlistId, file: this.selected })
+      this.$store.dispatch('playlist/updatePlaylist', data)
       this.$emit('dialog')
       this.selected = []
     }
