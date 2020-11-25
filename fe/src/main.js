@@ -11,8 +11,8 @@ import 'roboto-fontface/css/roboto/roboto-fontface.css'
 import '@mdi/font/css/materialdesignicons.css'
 
 Vue.config.productionTip = false
-const socket = io('http://' + window.location.hostname + ':3000')
-axios.defaults.baseURL = 'http://' + window.location.hostname + ':3000'
+const socket = io('http://' + window.location.hostname)
+axios.defaults.baseURL = 'http://' + window.location.hostname
 // axios.defaults.withCredentials = true
 Vue.prototype.$socket = socket
 Vue.prototype.$axios = axios

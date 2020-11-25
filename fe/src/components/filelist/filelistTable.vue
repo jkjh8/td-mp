@@ -76,7 +76,7 @@ export default {
         autoplay: true,
         sources: [{
           type: 'video/mp4',
-          src: `http://${window.location.hostname}:3000/api/filelist/preview/${file}`
+          src: `http://${window.location.hostname}/api/filelist/preview/${file}`
         }]
 
       }
