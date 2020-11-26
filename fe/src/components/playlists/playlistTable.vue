@@ -21,7 +21,7 @@
         <td class="text-center">
           {{ item.playid + 1 }}
         </td>
-        <td>{{ item.name }}</td>
+        <td class="text-left">{{ item.name }}</td>
         <td>{{ times(item.duration) }}</td>
         <td class="text-center">
           <v-btn
