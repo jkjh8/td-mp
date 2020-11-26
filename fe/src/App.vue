@@ -90,8 +90,10 @@ export default {
         { item: 'home', link: '/' },
         { item: 'playlist', link: '/playlist' },
         { item: 'filelist', link: '/filelist' },
+        { item: 'scheduler', link: '/scheduler' },
         { item: 'player', link: '/player' },
-        { item: 'ipaddress', link: '/ipaddr' }
+        { item: 'ipaddress', link: '/ipaddr' },
+        { item: 'reboot', link: '/reboot' }
       ]
     }
   },

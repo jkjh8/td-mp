@@ -42,12 +42,22 @@ const routes = [
     beforeEnter: requireAuth()
   },
   {
+    path: '/scheduler',
+    component: () => import('../views/Scheduler.vue'),
+    beforeEnter: requireAuth()
+  },
+  {
     path: '/player',
     component: () => import('../views/Player.vue')
   },
   {
     path: '/ipaddr',
     component: () => import('../views/Ipaddr.vue'),
+    beforeEnter: requireAuth()
+  },
+  {
+    path: '/reboot',
+    component: () => import('../views/Reboot.vue'),
     beforeEnter: requireAuth()
   },
   {

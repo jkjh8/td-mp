@@ -2,13 +2,25 @@
   <v-container>
     <v-card>
       <v-card-title>
-        <h4>ADD PLAYLIST</h4>
+        <v-col cols="" class="text-left">
+          <h4>ADD PLAYLIST</h4>
+        </v-col>
+        <v-col>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="search"
+            single-line
+            hide-details
+          />
+        </v-col>
       </v-card-title>
       <v-card-text>
         <v-data-table
           v-model="selected"
           :headers="headers"
           :items="filelist"
+          :search="search"
           item-key="name"
           show-select
         >
@@ -66,6 +78,7 @@ export default {
     return {
       previewDialog: false,
       videoSource: '',
+      search: '',
       selected: [],
       headers: [
         { text: 'Name', value: 'name' },
@@ -111,3 +124,9 @@ export default {
   }
 }
 </script>
+
+<style>
+v-text-field {
+  width: 100px;
+}
+</style>

@@ -1,9 +1,23 @@
 <template>
   <v-container>
+    <v-row>
+      <v-spacer />
+      <v-col cols="4">
+        <v-text-field
+          class="pt-0 mt-0"
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="search"
+          single-line
+          hide-details
+        />
+      </v-col>
+  </v-row>
     <v-data-table
       v-model="selected"
       :headers="headers"
       :items="filelist"
+      :search="search"
       item-key="name"
       show-select
     >
@@ -45,6 +59,7 @@ export default {
     return {
       previewDialog: false,
       videoSource: '',
+      search: '',
       selected: [],
       headers: [
         { text: 'Name', value: 'name' },
@@ -76,7 +91,7 @@ export default {
         autoplay: true,
         sources: [{
           type: 'video/mp4',
-          src: `http://${window.location.hostname}/api/filelist/preview/${file}`
+          src: `http://${window.location.hostname}:3000/api/filelist/preview/${file}`
         }]
 
       }
