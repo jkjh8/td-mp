@@ -49,7 +49,6 @@ module.exports.refrash = async function(req, res) {
   db_filelist.insertMany(filesInfo, function(err, rtdata) {
     if (err) return res.status(500).json({ error: err })
     return res.status(200).json(rtdata)
-
   })
 }
 

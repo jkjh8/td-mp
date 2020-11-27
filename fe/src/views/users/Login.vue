@@ -38,6 +38,9 @@
         >
           Submit
         </v-btn>
+        <v-btn to="/">
+          CANCEL
+        </v-btn>
       </v-card-actions>
     </v-card>
   </form>
@@ -94,6 +97,10 @@ export default {
       this.$axios.post('/api/users/login', this.userInfo).then((res) => {
         this.$store.dispatch('users/updateUser', res.data.user)
         this.$router.push('/')
+      }).catch((err) => {
+        this.message = err.response.data.message
+        this.alertType = 'error'
+        this.errmsg = true
       })
     }
   }
