@@ -14,6 +14,7 @@
         >
           <FilelistTable
             class="pa-0 ma-0"
+            :singleSelect="false"
             @dialog="updateDialog=!updateDialog"
           />
         </v-dialog>

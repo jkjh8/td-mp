@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
-import store from '../store'
+// import store from '../store'
 
 const requireAuth = () => (to, from, next) => {
-  if (store.state.users.user) {
-    return next()
-  }
-  next('/login')
+  // if (store.state.users.user) {
+  //   return next()
+  // }
+  // next('/login')
+  next()
 }
 
 Vue.use(VueRouter)

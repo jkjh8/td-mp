@@ -23,6 +23,7 @@
           :search="search"
           item-key="name"
           show-select
+          :single-select="singleSelect"
         >
           <template v-slot:item.duration="{ item }">
             {{ times(item.duration) }}
@@ -72,6 +73,7 @@ import { actions } from '../../mixins/action'
 import Preview from '../VideoPreview'
 
 export default {
+  props: ['singleSelect'],
   components: { Preview },
   mixins: [actions, dataFormat],
   data () {
@@ -116,10 +118,14 @@ export default {
       }
     },
     async addPlaylist () {
-      const { data } = await this.$axios.post('/api/addPlaylist', { id: this.playlistId, file: this.selected })
-      this.$store.dispatch('playlist/updatePlaylist', data)
-      this.$emit('dialog')
-      this.selected = []
+      if (this.singleSelect) {
+        this.$emit('click', this.selected)
+      } else {
+        const { data } = await this.$axios.post('/api/addPlaylist', { id: this.playlistId, file: this.selected })
+        this.$store.dispatch('playlist/updatePlaylist', data)
+        this.$emit('dialog')
+        this.selected = []
+      }
     }
   }
 }
