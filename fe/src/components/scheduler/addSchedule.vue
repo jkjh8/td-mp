@@ -15,6 +15,9 @@
         <v-icon>mdi-pencil</v-icon>
         <v-toolbar-title>ADD SCHEDULE</v-toolbar-title>
       </v-toolbar>
+      <v-alert :type="alertType" :value="errmsg" transition="scroll-y-transition">
+        {{ alertMessage }}
+      </v-alert>
       <v-card-text>
         <v-text-field
           v-model="name"
@@ -27,124 +30,9 @@
           label="구분"
           :items="items"
         />
-        <v-dialog
-          ref="startDateDialog"
-          v-model="dateModalStart"
-          :return-value.sync="startDate"
-          persistent
-          width="290px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="startDate"
-              label="시작 날짜"
-              prepend-icon="mdi-calendar"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="startDate"
-            scrollable
-            locale="ko"
-          >
-            <v-spacer></v-spacer>
-            <v-btn
-              text
-              color="primary"
-              @click="dateModalStart = false"
-            >
-              Cancel
-            </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="$refs.startDateDialog.save(startDate)"
-            >
-              OK
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
-        <v-dialog
-          v-if="mode === '매일'"
-          ref="endDateDialog"
-          v-model="dateModalEnd"
-          :return-value.sync="endDate"
-          persistent
-          width="290px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="endDate"
-              label="종료 날짜"
-              prepend-icon="mdi-calendar"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-date-picker
-            v-model="endDate"
-            scrollable
-            locale="ko"
-          >
-            <v-spacer></v-spacer>
-            <v-btn
-              text
-              color="primary"
-              @click="dateModalEnd = false"
-            >
-              Cancel
-            </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="$refs.endDateDialog.save(endDate)"
-            >
-              OK
-            </v-btn>
-          </v-date-picker>
-        </v-dialog>
-        <v-dialog
-          ref="startTimeDialog"
-          v-model="timeModal"
-          :return-value.sync="time"
-          persistent
-          width="290px"
-        >
-          <template v-slot:activator="{ on, attrs }">
-            <v-text-field
-              v-model="time"
-              label="시작 시간"
-              prepend-icon="mdi-clock-outline"
-              readonly
-              v-bind="attrs"
-              v-on="on"
-            ></v-text-field>
-          </template>
-          <v-time-picker
-            v-if="timeModal"
-            v-model="time"
-            full-width
-          >
-            <v-spacer></v-spacer>
-            <v-btn
-              text
-              color="primary"
-              @click="timeModal = false"
-            >
-              Cancel
-            </v-btn>
-            <v-btn
-              text
-              color="primary"
-              @click="$refs.startTimeDialog.save(time)"
-            >
-              OK
-            </v-btn>
-          </v-time-picker>
-        </v-dialog>
+        <DatePicker label="시작 날짜" @click="val => startDate = val" />
+        <DatePicker v-if="mode === '매일'" label="종료 날짜" @click="val => endDate = val" />
+        <TimePicker label="시작 시간" @click="val => time = val" />
         <v-select
           label="이벤트 모드"
           v-model="eventMode"
@@ -168,7 +56,6 @@
           readonly
           @click="fileNameModal=!fileNameModal"
         />
-
         <v-dialog
           v-model="fileNameModal"
           persistent
@@ -204,28 +91,25 @@
 
 <script>
 import FilelistTable from '../playlists/filelistTable'
+import DatePicker from './datePicker'
+import TimePicker from './timePicker'
 
 export default {
   props: ['addScheduleModal'],
-  components: { FilelistTable },
-  watch: {
-    fileName (value) {
-      console.log(value)
-    }
-  },
+  components: { FilelistTable, DatePicker, TimePicker },
   data () {
     return {
+      alertType: 'error',
+      errmsg: false,
+      alertMessage: '',
       name: '',
       mode: '',
       eventMode: '',
-      timeModal: false,
       playlist: '',
       time: null,
       fileName: '',
       fileNameModal: false,
       singleSelect: true,
-      dateModalStart: false,
-      dateModalEnd: false,
       startDate: new Date().toISOString().substr(0, 10),
       endDate: new Date().toISOString().substr(0, 10),
       items: [
@@ -249,15 +133,76 @@ export default {
       ]
     }
   },
+  watch: {
+    errmsg (val) {
+      if (!val) { return }
+      setTimeout(() => (this.errmsg = false), 2000)
+    },
+    startDate (val) {
+      console.log(val)
+    }
+  },
   methods: {
     add () {
+      if (this.name === '') {
+        this.errmsg = true
+        this.alertMessage = '스케줄 이름을 입력하세요'
+        return
+      }
+      if (this.mode === '') {
+        this.errmsg = true
+        this.alertMessage = '스케줄 모드를 입력하세요'
+        return
+      }
+      if (this.eventMode === '') {
+        this.errmsg = true
+        this.alertMessage = '이벤트 모드를 입력하세요'
+        return
+      }
+      if (this.time === null) {
+        this.errmsg = true
+        this.alertMessage = '시작 시간을 입력하세요'
+        return
+      }
       this.$emit('close')
       const timestemp = (this.startDate + 'T' + this.time + ':00+09:00')
       console.log(new Date(timestemp).getTime())
+      const start = new Date(this.startDate + 'T' + this.time + ':00+09:00').getTime()
+      const end = (this.endDate + 'T' + this.time + ':05+09:00')
+      let color = ''
+      switch (this.eventMode) {
+        case '플레이리스트':
+          color = 'green'
+          break
+        case '파일':
+          color = 'puple'
+          break
+        case 'Stop':
+          color = 'red'
+      }
+      const upload = {
+        name: this.name,
+        start: start,
+        end: new Date(end).getTime(),
+        color: color,
+        detailes: {
+          mode: this.mode,
+          event: this.eventMode,
+          playlist: this.playlist,
+          file: this.fileName
+        }
+      }
+      console.log(upload)
     },
     updateFileName (payload) {
       this.fileName = payload[0].name
       this.fileNameModal = false
+    },
+    reset () {
+      this.name = ''
+      this.mode = ''
+      this.time = null
+      this.eventMode = ''
     }
   }
 }
