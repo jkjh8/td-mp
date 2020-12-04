@@ -1,7 +1,7 @@
 <template>
   <v-container>
     <h1>Scheduler</h1>
-    <v-card height="auto">
+    <v-card height="100%" class="flaxcard">
       <v-card-title height="30">
         <v-toolbar
           flat
@@ -82,12 +82,12 @@
       </v-card-title>
       <v-divider />
       <v-card-text>
-        <v-sheet height="600">
+        <v-sheet height="100%">
           <v-calendar
             ref="calendar"
             v-model="focus"
             color="primary"
-            :events="events"
+            :events="schedule"
             :event-color="getEventColor"
             :type="type"
             @click:event="showEvent"
@@ -100,45 +100,29 @@
             :close-on-content-click="false"
             :activator="selectedElement"
             offset-x
+            max-width="400px"
           >
-            <v-card
-              color="grey lighten-4"
-              min-width="350px"
-              flat
-            >
-              <v-toolbar
-                :color="selectedEvent.color"
-                dark
-              >
-                <v-btn icon>
-                  <v-icon>mdi-pencil</v-icon>
-                </v-btn>
-                <v-toolbar-title v-html="selectedEvent.name"></v-toolbar-title>
-                <v-spacer></v-spacer>
-                <v-btn icon>
-                  <v-icon>mdi-heart</v-icon>
-                </v-btn>
-                <v-btn icon>
-                  <v-icon>mdi-dots-vertical</v-icon>
-                </v-btn>
-              </v-toolbar>
-              <v-card-text>
-                <span v-html="selectedEvent.details"></span>
-              </v-card-text>
-              <v-card-actions>
-                <v-btn
-                  text
-                  color="secondary"
-                  @click="selectedOpen = false"
-                >
-                  Cancel
-                </v-btn>
-              </v-card-actions>
-            </v-card>
+            <EditSchedule
+              :selectedOpen='selectedOpen'
+              :selectedEvent='selectedEvent'
+              @close="selectedOpen = false"
+            />
           </v-menu>
         </v-sheet>
         <AddSchedule
           :addScheduleModal="addScheduleModal"
+          :name="name"
+          :mode="mode"
+          :eventMode="eventMode"
+          :playlist="playlist"
+          :time="time"
+          :timed="timed"
+          :fileName="fileName"
+          :startDate="startDate"
+          :endDate="endDate"
+          :items="items"
+          :eventItems="eventItems"
+          :playlistItem="playlistItem"
           @close="addScheduleModal=!addScheduleModal"
         />
       </v-card-text>
@@ -147,10 +131,13 @@
 </template>
 
 <script>
+import { scheduleMixins } from '../mixins/schedule'
+import EditSchedule from '../components/scheduler/editSchedule'
 import AddSchedule from '../components/scheduler/addSchedule'
 
 export default {
-  components: { AddSchedule },
+  components: { AddSchedule, EditSchedule },
+  mixins: [scheduleMixins],
   data: () => ({
     addScheduleModal: false,
     focus: '',
@@ -163,24 +150,23 @@ export default {
     },
     selectedEvent: {},
     selectedElement: null,
-    selectedOpen: false,
-    events: [],
-    colors: ['blue', 'indigo', 'deep-purple', 'cyan', 'green', 'orange', 'grey darken-1']
-    // names: ['Meeting', 'Holiday', 'PTO', 'Travel', 'Event', 'Birthday', 'Conference', 'Party']
+    selectedOpen: false
   }),
   mounted () {
-    this.$refs.calendar.checkChange()
+    // const { data } = await this.$axios.get('/api/getSchedule')
+    // this.$store.dispatch('schedule/updateSchedule', data)
+    // this.$refs.calendar.checkChange()
   },
   methods: {
     viewDay ({ date }) {
       this.focus = date
       this.type = 'day'
     },
-    getEventColor (event) {
-      return event.color
-    },
     setToday () {
       this.focus = ''
+    },
+    getEventColor (event) {
+      return event.color
     },
     prev () {
       this.$refs.calendar.prev()
@@ -189,7 +175,6 @@ export default {
       this.$refs.calendar.next()
     },
     showEvent ({ nativeEvent, event }) {
-      console.log(event)
       const open = () => {
         this.selectedEvent = event
         this.selectedElement = nativeEvent.target
@@ -204,57 +189,15 @@ export default {
       } else {
         open()
       }
-
       nativeEvent.stopPropagation()
-    },
-    updateRange ({ start, end }) {
-      const events = [
-        {
-          _id: 12301231,
-          name: '!!',
-          start: new Date().getTime(),
-          end: new Date().getTime(),
-          details: 'Detail',
-          color: 'blue',
-          timed: true
-        },
-        {
-          _id: 123029381,
-          name: '매일',
-          start: 1600520060857,
-          end: new Date().getTime(),
-          details: '매일하는거',
-          color: 'blue',
-          timed: false
-        }
-      ]
-
-      // const min = new Date(`${start.date}T00:00:00`)
-      // const max = new Date(`${end.date}T23:59:59`)
-      // const days = (max.getTime() - min.getTime()) / 86400000
-      // const eventCount = this.rnd(days, days + 2)
-
-      // for (let i = 0; i < eventCount; i++) {
-      //   const allDay = this.rnd(0, 3) === 0
-      //   const firstTimestamp = this.rnd(min.getTime(), max.getTime())
-      //   const first = new Date(firstTimestamp - (firstTimestamp % 900000))
-      //   const secondTimestamp = this.rnd(2, allDay ? 288 : 8) * 900000
-      //   const second = new Date(first.getTime() + secondTimestamp)
-
-      //   events.push({
-      //     name: this.names[this.rnd(0, this.names.length - 1)],
-      //     start: first,
-      //     end: second,
-      //     color: this.colors[this.rnd(0, this.colors.length - 1)],
-      //     timed: !allDay
-      //   })
-      // }
-
-      this.events = events
-    },
-    rnd (a, b) {
-      return Math.floor((b - a + 1) * Math.random()) + a
     }
   }
 }
 </script>
+
+<style>
+.flexcard {
+  display: flex;
+  flex-direction: column;
+}
+</style>

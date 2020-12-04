@@ -49,14 +49,20 @@ import { required } from 'vuelidate/lib/validators'
 
 export default {
   mixins: [validationMixin],
-  props: ['label'],
+  props: ['label', 'recvTime'],
   validations: {
     time: { required }
   },
   data () {
     return {
-      time: '',
+      time: this.recvTime,
       modal: false
+    }
+  },
+  watch: {
+    recvTime (val) {
+      console.log(val)
+      this.time = val
     }
   },
   computed: {

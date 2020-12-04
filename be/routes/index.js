@@ -11,10 +11,12 @@ const user = require('./users')
 const playlist = require('./playlist')
 const filelist = require('./filelist')
 const setup = require('./setup')
+const schedule = require('./schedule')
 
 router.use(user)
 router.use(playlist)
 router.use(filelist)
 router.use(setup)
+router.use(schedule)
 
 module.exports = router;

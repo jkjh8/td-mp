@@ -42,11 +42,17 @@
 
 <script>
 export default {
-  props: ['label'],
+  props: ['label', 'recvDate'],
   data () {
     return {
-      date: new Date().toISOString().substr(0, 10),
+      date: this.recvDate,
       dateModal: false
+    }
+  },
+  watch: {
+    recvDate (val) {
+      console.log(val)
+      this.date = val
     }
   },
   methods: {

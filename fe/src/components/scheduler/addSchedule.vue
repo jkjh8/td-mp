@@ -1,6 +1,6 @@
 <template>
   <v-dialog
-    max-width="600px"
+    max-width="400px"
     persistent
     v-model="addScheduleModal"
   >
@@ -90,60 +90,32 @@
 </template>
 
 <script>
+import { scheduleMixins } from '../../mixins/schedule'
 import FilelistTable from '../playlists/filelistTable'
 import DatePicker from './datePicker'
 import TimePicker from './timePicker'
 
 export default {
-  props: ['addScheduleModal'],
+  mixins: [scheduleMixins],
   components: { FilelistTable, DatePicker, TimePicker },
+  props: ['addScheduleModal'],
   data () {
     return {
       alertType: 'error',
       errmsg: false,
       alertMessage: '',
-      name: '',
-      mode: '',
-      eventMode: '',
-      playlist: '',
-      time: null,
-      fileName: '',
       fileNameModal: false,
-      singleSelect: true,
-      startDate: new Date().toISOString().substr(0, 10),
-      endDate: new Date().toISOString().substr(0, 10),
-      items: [
-        '매일',
-        '한번'
-      ],
-      eventItems: [
-        '플레이리스트',
-        '파일',
-        'Stop'
-      ],
-      playlistItem: [
-        { label: 'Playlist 1', id: 0 },
-        { label: 'Playlist 2', id: 1 },
-        { label: 'Playlist 3', id: 2 },
-        { label: 'Playlist 4', id: 3 },
-        { label: 'Playlist 5', id: 4 },
-        { label: 'Playlist 6', id: 5 },
-        { label: 'Playlist 7', id: 6 },
-        { label: 'Playlist 8', id: 7 }
-      ]
+      singleSelect: true
     }
   },
   watch: {
     errmsg (val) {
       if (!val) { return }
       setTimeout(() => (this.errmsg = false), 2000)
-    },
-    startDate (val) {
-      console.log(val)
     }
   },
   methods: {
-    add () {
+    async add () {
       if (this.name === '') {
         this.errmsg = true
         this.alertMessage = '스케줄 이름을 입력하세요'
@@ -164,9 +136,12 @@ export default {
         this.alertMessage = '시작 시간을 입력하세요'
         return
       }
+      if (this.mode === '매일') {
+        this.timed = false
+      } else {
+        this.timed = true
+      }
       this.$emit('close')
-      const timestemp = (this.startDate + 'T' + this.time + ':00+09:00')
-      console.log(new Date(timestemp).getTime())
       const start = new Date(this.startDate + 'T' + this.time + ':00+09:00').getTime()
       const end = (this.endDate + 'T' + this.time + ':05+09:00')
       let color = ''
@@ -175,7 +150,7 @@ export default {
           color = 'green'
           break
         case '파일':
-          color = 'puple'
+          color = 'deep-purple'
           break
         case 'Stop':
           color = 'red'
@@ -185,24 +160,16 @@ export default {
         start: start,
         end: new Date(end).getTime(),
         color: color,
-        detailes: {
-          mode: this.mode,
-          event: this.eventMode,
-          playlist: this.playlist,
-          file: this.fileName
-        }
+        mode: this.mode,
+        event: this.eventMode,
+        playlist: this.playlist,
+        file: this.fileName,
+        timed: this.timed
       }
-      console.log(upload)
-    },
-    updateFileName (payload) {
-      this.fileName = payload[0].name
-      this.fileNameModal = false
-    },
-    reset () {
-      this.name = ''
-      this.mode = ''
-      this.time = null
-      this.eventMode = ''
+      const result = await this.$axios.post('/api/addSchedule', upload)
+      console.log(result)
+      this.$store.dispatch('schedule/updateSchedule', result.data)
+      this.reset()
     }
   }
 }

@@ -4,6 +4,7 @@ import users from './users'
 import playlist from './playlist'
 import filelist from './filelist'
 import setup from './setup'
+import schedule from './schedule'
 
 Vue.use(Vuex)
 
@@ -18,6 +19,7 @@ export default new Vuex.Store({
     users,
     playlist,
     filelist,
-    setup
+    setup,
+    schedule
   }
 })

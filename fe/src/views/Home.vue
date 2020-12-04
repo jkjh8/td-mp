@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <div><h3>Media Server Status</h3></div>
+    <div class="title"><h3>Media Server Status</h3></div>
     <div><b>Play List : </b>{{ currentPlaylist }}</div>
     <div><b>Play File : </b>{{ currentFile }}</div>
     <div><b>Duration : </b>{{ duration }}</div>
@@ -42,5 +42,12 @@ export default {
 <style>
 div {
   text-align: center;
+}
+.home {
+  height: 70vh;
+  vertical-align: middle;
+}
+.title {
+  margin: 20px auto;
 }
 </style>
