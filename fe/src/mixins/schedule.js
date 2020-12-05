@@ -74,7 +74,7 @@ export const scheduleMixins = {
       //   })
       // }
       const { data } = await this.$axios.get('/api/getSchedule')
-      this.$store.dispatch('schedule/updateSchedule', data)
+      await this.$store.dispatch('schedule/updateSchedule', data)
     },
     async deleteSchedule (id) {
       const res = await this.$dialog.confirm({
